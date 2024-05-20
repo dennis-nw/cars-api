@@ -1,5 +1,8 @@
 FROM docker.io/python:3.11-slim-bookworm
 
+RUN apt-get update
+RUN apt-get -y install gcc python3-dev
+
 RUN pip install poetry
 
 WORKDIR /app
@@ -16,4 +19,4 @@ COPY alembic.ini .
 
 EXPOSE 8000
 
-CMD ["uvicorn", "src.main:app", "--host", "0.0.0.0", "--port", "8000"]
+CMD ["uvicorn", "app.main:app", "--host", "0.0.0.0", "--port", "8000"]
