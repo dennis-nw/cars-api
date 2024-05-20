@@ -22,18 +22,18 @@ def fetch_car_makes(session: Session, search: str = None):
     return res.scalars().all()
 
 
-def fetch_car_make(session: Session, make_id: str):
+def fetch_car_make(session: Session, make_id: str, raise_error: bool = True):
     make = db.CarMake.find(session, value=make_id)
-    if make is None:
+    if make is None and raise_error:
         raise InvalidMakeException(make_id)
     return make
 
 
 def add_car_make(session: Session, car_make: schemas.CarMakeCreate):
     make_id = slugify(car_make.name)
-    car_make = fetch_car_make(session, make_id)
-    if car_make is not None:
-        return car_make
+    existing_car_make = fetch_car_make(session, make_id, False)
+    if existing_car_make is not None:
+        return existing_car_make
     return CarMake.create(session=session, id=make_id, name=car_make.name)
 
 
@@ -42,8 +42,7 @@ def fetch_model(session: Session, model_id: str):
 
 
 def fetch_make_models(session: Session, make_id: str):
-    if fetch_car_make(session, make_id) is None:
-        raise InvalidMakeException(make_id)
+    fetch_car_make(session, make_id)
     stmt = select(db.CarModel).where(db.CarModel.make_id == make_id)
     res = session.execute(stmt)
     return res.scalars().all()
