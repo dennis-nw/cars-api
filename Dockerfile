@@ -7,6 +7,10 @@ RUN pip install poetry
 
 WORKDIR /app
 
+RUN mkdir "data"
+
+# VOLUME data
+
 COPY poetry.lock .
 COPY pyproject.toml .
 
