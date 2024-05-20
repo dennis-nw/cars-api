@@ -3,7 +3,7 @@ import os
 
 from slugify import slugify
 
-from app.db import session_scope
+from app.db.session import session_scope
 from app.models import CarModel, CarMake
 
 
