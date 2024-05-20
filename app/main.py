@@ -10,6 +10,8 @@ from app.service import (
     fetch_car_make,
     fetch_make_models,
     InvalidMakeException,
+    add_car_make,
+    add_make_models,
 )
 
 description = """
@@ -45,6 +47,16 @@ def get_car_makes(search: str = None, session: Session = Depends(get_db_session)
     return fetch_car_makes(session, search)
 
 
+@app.post("/makes", response_model=schemas.CarMake)
+def add_new_make(
+    car_make: schemas.CarMakeCreate, session: Session = Depends(get_db_session)
+):
+    """
+    Adds a new car make
+    """
+    return add_car_make(session, car_make)
+
+
 @app.get("/makes/{make_id}", response_model=schemas.CarMake)
 def get_car_make(make_id: str, session: Session = Depends(get_db_session)):
     """
@@ -59,3 +71,17 @@ def get_make_models(make_id: str, session: Session = Depends(get_db_session)):
     Returns a list of models for a given car make.
     """
     return fetch_make_models(session, make_id)
+
+
+@app.post(
+    "/makes/{make_id}/models", response_model=list[schemas.CarModel], status_code=201
+)
+def add_new_make_models(
+    make_id: str,
+    models: list[schemas.CarModelCreate],
+    session: Session = Depends(get_db_session),
+):
+    """
+    Adds new models for a given car make
+    """
+    return add_make_models(session, make_id, models)

@@ -1,7 +1,10 @@
+from slugify import slugify
 from sqlalchemy import select
 from sqlalchemy.orm import Session
 
 from app import models as db
+from app import schemas
+from app.models import CarMake, CarModel
 
 
 class InvalidMakeException(Exception):
@@ -26,9 +29,40 @@ def fetch_car_make(session: Session, make_id: str):
     return make
 
 
+def add_car_make(session: Session, car_make: schemas.CarMakeCreate):
+    make_id = slugify(car_make.name)
+    car_make = fetch_car_make(session, make_id)
+    if car_make is not None:
+        return car_make
+    return CarMake.create(session=session, id=make_id, name=car_make.name)
+
+
+def fetch_model(session: Session, model_id: str):
+    return db.CarModel.find(session, model_id)
+
+
 def fetch_make_models(session: Session, make_id: str):
     if fetch_car_make(session, make_id) is None:
         raise InvalidMakeException(make_id)
     stmt = select(db.CarModel).where(db.CarModel.make_id == make_id)
     res = session.execute(stmt)
     return res.scalars().all()
+
+
+def add_make_models(
+    session: Session, make_id: str, models: list[schemas.CarModelCreate]
+):
+    if fetch_car_make(session, make_id) is None:
+        raise InvalidMakeException(make_id)
+    added_models: list[schemas.CarModel] = []
+    for model in models:
+        model_id = slugify(model.name)
+        existing_model = fetch_model(session, model_id)
+        if existing_model is None:
+            new_model = CarModel.create(
+                session, id=model_id, name=model.name, make_id=make_id
+            )
+            added_models.append(new_model)
+        else:
+            added_models.append(existing_model)
+    return added_models
