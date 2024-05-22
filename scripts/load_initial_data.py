@@ -4,7 +4,7 @@ import os
 from slugify import slugify
 
 from app.db.session import session_scope
-from app.models import CarModel, CarMake
+from app.models.cars import CarMake, CarModel
 
 
 def get_car_makes_from_csv():

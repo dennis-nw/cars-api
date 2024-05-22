@@ -2,9 +2,8 @@ from slugify import slugify
 from sqlalchemy import select
 from sqlalchemy.orm import Session
 
-from app import models as db
-from app import schemas
-from app.models import CarMake, CarModel
+from app.models.cars import CarMake, CarModel
+from app.schemas.cars import CarMakeCreateSchema, CarModelCreateSchema, CarModelSchema
 
 
 class InvalidMakeException(Exception):
@@ -15,21 +14,21 @@ class InvalidMakeException(Exception):
 
 
 def fetch_car_makes(session: Session, search: str = None):
-    stmt = select(db.CarMake)
+    stmt = select(CarMake)
     if search:
-        stmt = stmt.where(db.CarMake.name.istartswith(search))
+        stmt = stmt.where(CarMake.name.istartswith(search))
     res = session.execute(stmt)
     return res.scalars().all()
 
 
 def fetch_car_make(session: Session, make_id: str, raise_error: bool = True):
-    make = db.CarMake.find(session, value=make_id)
+    make = CarMake.find(session, value=make_id)
     if make is None and raise_error:
         raise InvalidMakeException(make_id)
     return make
 
 
-def add_car_make(session: Session, car_make: schemas.CarMakeCreate):
+def add_car_make(session: Session, car_make: CarMakeCreateSchema):
     make_id = slugify(car_make.name)
     existing_car_make = fetch_car_make(session, make_id, False)
     if existing_car_make is not None:
@@ -38,22 +37,20 @@ def add_car_make(session: Session, car_make: schemas.CarMakeCreate):
 
 
 def fetch_model(session: Session, model_id: str):
-    return db.CarModel.find(session, model_id)
+    return CarModel.find(session, model_id)
 
 
 def fetch_make_models(session: Session, make_id: str):
     fetch_car_make(session, make_id)
-    stmt = select(db.CarModel).where(db.CarModel.make_id == make_id)
+    stmt = select(CarModel).where(CarModel.make_id == make_id)
     res = session.execute(stmt)
     return res.scalars().all()
 
 
-def add_make_models(
-    session: Session, make_id: str, models: list[schemas.CarModelCreate]
-):
+def add_make_models(session: Session, make_id: str, models: list[CarModelCreateSchema]):
     if fetch_car_make(session, make_id) is None:
         raise InvalidMakeException(make_id)
-    added_models: list[schemas.CarModel] = []
+    added_models: list[CarModel] = []
     for model in models:
         model_id = slugify(model.name)
         existing_model = fetch_model(session, model_id)

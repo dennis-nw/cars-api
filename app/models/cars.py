@@ -3,13 +3,10 @@ from sqlalchemy import (
     ForeignKey,
     UniqueConstraint,
 )
-from sqlalchemy.orm import Mapped, mapped_column, DeclarativeBase
-
-from app.db.active_record import ActiveRecordMixin
+from sqlalchemy.orm import Mapped, mapped_column
 
 
-class Base(DeclarativeBase):
-    pass
+from app.models.base import Base, ActiveRecordMixin
 
 
 class CarMake(Base, ActiveRecordMixin):

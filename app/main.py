@@ -3,9 +3,14 @@ from sqlalchemy.orm import Session
 from starlette.requests import Request
 from starlette.responses import JSONResponse
 
-from app import schemas
 from app.db.session import get_db_session
-from app.service import (
+from app.schemas.cars import (
+    CarMakeSchema,
+    CarMakeCreateSchema,
+    CarModelSchema,
+    CarModelCreateSchema,
+)
+from app.service.cars import (
     fetch_car_makes,
     fetch_car_make,
     fetch_make_models,
@@ -39,7 +44,7 @@ async def root():
     return "Cars API"
 
 
-@app.get("/makes", response_model=list[schemas.CarMake])
+@app.get("/makes", response_model=list[CarMakeSchema])
 def get_car_makes(search: str = None, session: Session = Depends(get_db_session)):
     """
     Lists all car makes. If `search` is present, makes containing that term will be filtered.
@@ -47,9 +52,9 @@ def get_car_makes(search: str = None, session: Session = Depends(get_db_session)
     return fetch_car_makes(session, search)
 
 
-@app.post("/makes", response_model=schemas.CarMake)
+@app.post("/makes", response_model=CarMakeSchema)
 def add_new_make(
-    car_make: schemas.CarMakeCreate, session: Session = Depends(get_db_session)
+    car_make: CarMakeCreateSchema, session: Session = Depends(get_db_session)
 ):
     """
     Adds a new car make
@@ -57,7 +62,7 @@ def add_new_make(
     return add_car_make(session, car_make)
 
 
-@app.get("/makes/{make_id}", response_model=schemas.CarMake)
+@app.get("/makes/{make_id}", response_model=CarMakeSchema)
 def get_car_make(make_id: str, session: Session = Depends(get_db_session)):
     """
     Returns a single car make.
@@ -65,7 +70,7 @@ def get_car_make(make_id: str, session: Session = Depends(get_db_session)):
     return fetch_car_make(session, make_id)
 
 
-@app.get("/makes/{make_id}/models", response_model=list[schemas.CarModel])
+@app.get("/makes/{make_id}/models", response_model=list[CarModelSchema])
 def get_make_models(make_id: str, session: Session = Depends(get_db_session)):
     """
     Returns a list of models for a given car make.
@@ -74,11 +79,11 @@ def get_make_models(make_id: str, session: Session = Depends(get_db_session)):
 
 
 @app.post(
-    "/makes/{make_id}/models", response_model=list[schemas.CarModel], status_code=201
+    "/makes/{make_id}/models", response_model=list[CarModelSchema], status_code=201
 )
 def add_new_make_models(
     make_id: str,
-    models: list[schemas.CarModelCreate],
+    models: list[CarModelCreateSchema],
     session: Session = Depends(get_db_session),
 ):
     """
