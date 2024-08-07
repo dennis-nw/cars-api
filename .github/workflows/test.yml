@@ -1,0 +1,20 @@
+name: Unit Tests
+
+on: push
+
+jobs:
+  test:
+    name: Unit Tests
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v3
+
+      - name: Install Poetry
+        run: pip install poetry
+
+      - name: Install deps
+        run: poetry install
+
+      - name: Run tests
+        run: ./scripts/test.sh

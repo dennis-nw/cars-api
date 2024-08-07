@@ -1,5 +1,6 @@
 from fastapi import FastAPI, Depends
 from sqlalchemy.orm import Session
+from starlette import status
 from starlette.requests import Request
 from starlette.responses import JSONResponse
 
@@ -52,7 +53,7 @@ def get_car_makes(search: str = None, session: Session = Depends(get_db_session)
     return fetch_car_makes(session, search)
 
 
-@app.post("/makes", response_model=CarMakeSchema)
+@app.post("/makes", response_model=CarMakeSchema, status_code=status.HTTP_201_CREATED)
 def add_new_make(
     car_make: CarMakeCreateSchema, session: Session = Depends(get_db_session)
 ):
