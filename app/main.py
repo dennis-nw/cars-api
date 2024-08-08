@@ -80,7 +80,9 @@ def get_make_models(make_id: str, session: Session = Depends(get_db_session)):
 
 
 @app.post(
-    "/makes/{make_id}/models", response_model=list[CarModelSchema], status_code=201
+    "/makes/{make_id}/models",
+    response_model=list[CarModelSchema],
+    status_code=status.HTTP_201_CREATED,
 )
 def add_new_make_models(
     make_id: str,

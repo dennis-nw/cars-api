@@ -5,7 +5,7 @@ from starlette.testclient import TestClient
 
 from app.db.session import get_db_session
 from app.main import app
-from app.models.cars import CarMake
+from app.models.cars import CarMake, CarModel
 
 DATABASE_URL = "sqlite:///data/test.db"
 engine = create_engine(DATABASE_URL, connect_args={"check_same_thread": False})
@@ -45,7 +45,14 @@ def init_test_data(test_db):
         CarMake(id="infinity", name="Infinity"),
         CarMake(id="toyota", name="Toyota"),
     ]
+    car_models = [
+        CarModel(id="audi-q5", name="Q5", make_id="audi"),
+        CarModel(id="audi-a4", name="A4", make_id="audi"),
+        CarModel(id="infinity-q50", name="Q50", make_id="infinity"),
+        CarModel(id="toyota-prado", name="Prado", make_id="toyota"),
+    ]
     test_db.add_all(car_makes)
+    test_db.add_all(car_models)
     test_db.commit()
 
     yield

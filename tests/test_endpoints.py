@@ -32,3 +32,25 @@ def test_get_car_make(client, init_test_data):
 
     assert response.status_code == status.HTTP_200_OK
     assert response.json() == expected_response
+
+
+def test_get_make_models(client, init_test_data):
+    response = client.get(url="/makes/audi/models")
+    expected_response = [
+        {"id": "audi-a4", "name": "A4"},
+        {"id": "audi-q5", "name": "Q5"},
+    ]
+    assert response.status_code == status.HTTP_200_OK
+    assert response.json() == expected_response
+
+
+def test_add_new_make_model_invalid_make(client):
+    response = client.post(url="makes/xyz/models", json=[{"name": "Prado"}])
+    assert response.status_code == status.HTTP_404_NOT_FOUND
+
+
+def test_add_new_make_model(client):
+    response = client.post(url="/makes/infinity/models", json=[{"name": "Q60"}])
+    expected_response = [{"id": "infinity-q60", "name": "Q60"}]
+    assert response.status_code == status.HTTP_201_CREATED
+    assert response.json() == expected_response

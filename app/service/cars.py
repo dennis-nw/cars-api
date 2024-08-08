@@ -16,7 +16,7 @@ class InvalidMakeException(Exception):
 def fetch_car_makes(session: Session, search: str = None):
     stmt = select(CarMake)
     if search:
-        stmt = stmt.where(CarMake.name.istartswith(search))
+        stmt = stmt.where(CarMake.name.istartswith(search)).order_by(CarMake.name)
     res = session.execute(stmt)
     return res.scalars().all()
 
@@ -42,17 +42,18 @@ def fetch_model(session: Session, model_id: str):
 
 def fetch_make_models(session: Session, make_id: str):
     fetch_car_make(session, make_id)
-    stmt = select(CarModel).where(CarModel.make_id == make_id)
+    stmt = select(CarModel).where(CarModel.make_id == make_id).order_by(CarModel.name)
     res = session.execute(stmt)
     return res.scalars().all()
 
 
 def add_make_models(session: Session, make_id: str, models: list[CarModelCreateSchema]):
-    if fetch_car_make(session, make_id) is None:
+    car_make = fetch_car_make(session, make_id)
+    if car_make is None:
         raise InvalidMakeException(make_id)
     added_models: list[CarModel] = []
     for model in models:
-        model_id = slugify(model.name)
+        model_id = f"{car_make.id}-{slugify(model.name)}"
         existing_model = fetch_model(session, model_id)
         if existing_model is None:
             new_model = CarModel.create(
