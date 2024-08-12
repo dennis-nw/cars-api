@@ -58,4 +58,5 @@ def init_test_data(test_db):
     yield
 
     test_db.query(CarMake).delete()
+    test_db.query(CarModel).delete()
     test_db.commit()
