@@ -49,7 +49,7 @@ def test_add_new_make_model_invalid_make(client):
     assert response.status_code == status.HTTP_404_NOT_FOUND
 
 
-def test_add_new_make_model(client):
+def test_add_new_make_model(client, init_test_data):
     response = client.post(url="/makes/infinity/models", json=[{"name": "Q60"}])
     expected_response = [{"id": "infinity-q60", "name": "Q60"}]
     assert response.status_code == status.HTTP_201_CREATED

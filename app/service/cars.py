@@ -49,8 +49,6 @@ def fetch_make_models(session: Session, make_id: str):
 
 def add_make_models(session: Session, make_id: str, models: list[CarModelCreateSchema]):
     car_make = fetch_car_make(session, make_id)
-    if car_make is None:
-        raise InvalidMakeException(make_id)
     added_models: list[CarModel] = []
     for model in models:
         model_id = f"{car_make.id}-{slugify(model.name)}"

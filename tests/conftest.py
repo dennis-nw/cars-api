@@ -37,7 +37,7 @@ def client(test_db):
     app.dependency_overrides.clear()
 
 
-@pytest.fixture(scope="module")
+@pytest.fixture(scope="function")
 def init_test_data(test_db):
     car_makes = [
         CarMake(id="audi", name="Audi"),
