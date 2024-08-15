@@ -3,7 +3,7 @@ from sqlalchemy import select
 from sqlalchemy.orm import Session
 
 from app.models.cars import CarMake, CarModel
-from app.schemas.cars import CarMakeCreateSchema, CarModelCreateSchema, CarModelSchema
+from app.schemas.cars import CarMakeCreateSchema, CarModelCreateSchema
 
 
 class InvalidMakeException(Exception):
