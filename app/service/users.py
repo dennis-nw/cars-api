@@ -17,6 +17,10 @@ def verify_password_hash(plain_password: str, hashed_password: str):
     )
 
 
+def generate_access_token(data: dict, expires_delta: int = 30) -> str:
+    pass
+
+
 def fetch_user(
     session: Session, user: UserCreateSchema, create_if_none: bool = False
 ) -> tuple[UserBaseSchema, bool]:
@@ -25,8 +29,9 @@ def fetch_user(
     if existing_user is None and create_if_none:
         hashed_password = get_password_hash(user.password)
         new_user = User.create(session, email=user.email, password=hashed_password)
-        return UserBaseSchema.from_orm(new_user), created
-    return UserBaseSchema.from_orm(existing_user), created
+        created = True
+        return UserBaseSchema.model_validate(new_user), created
+    return UserBaseSchema.model_validate(existing_user), created
 
 
 def authenticate_user(session: Session, user: UserAuthSchema):

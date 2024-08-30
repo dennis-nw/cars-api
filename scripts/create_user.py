@@ -14,7 +14,7 @@ def main(email: str, password: str):
     if created:
         click.echo(f"User with email {user.email} has been created.")
     else:
-        click.echo(f"User with email {user.email} already exists.")
+        click.echo(f"User with email {user.email} already exists. Reset the password if you cannot remember it.")
 
 
 if __name__ == "__main__":
