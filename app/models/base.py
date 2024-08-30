@@ -1,7 +1,12 @@
 from typing import Any, Self
 
 from sqlalchemy import sql
+from sqlalchemy.orm import DeclarativeBase
 from sqlalchemy.orm import Session
+
+
+class Base(DeclarativeBase):
+    pass
 
 
 class ActiveRecordMixin:

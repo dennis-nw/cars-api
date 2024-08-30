@@ -9,15 +9,13 @@ WORKDIR /app
 
 RUN mkdir "data"
 
-# VOLUME data
-
 COPY poetry.lock .
 COPY pyproject.toml .
 
 RUN poetry config virtualenvs.create false && poetry install
 
 COPY app app
-COPY initial_data initial_data
+COPY scripts scripts
 COPY alembic alembic
 COPY alembic.ini .
 
